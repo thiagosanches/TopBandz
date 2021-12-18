@@ -1,4 +1,4 @@
-# top-bands
+# top-bandz
 
 ## Project setup
 ```
