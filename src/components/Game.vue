@@ -62,6 +62,7 @@
                     <a
                       href="#"
                       class="btn btn-success my-2"
+                      v-if="game.playEnabled"
                       v-on:click="playCard(index)"
                       >Use it!</a
                     >
@@ -90,7 +91,8 @@ export default {
         uuid: "",
         points: {},
         playerName: "",
-        is2ndPlayer: false,
+        playEnabled: true,
+        playersTurn: "",
         cards: [],
       },
     };
@@ -99,7 +101,9 @@ export default {
     newGame: function () {
       this.game.playerName;
       api.get(`/new?playerName=${this.game.playerName}`).then((response) => {
-        this.game.uuid = response.data;
+        this.game.uuid = response.data.uuid;
+        this.game.playEnabled =
+          response.data.playersTurn === this.game.playerName;
         this.getVisibleCards();
         setInterval(() => this.round(), UPDATE_INTERVAL_MS);
       });
@@ -121,13 +125,17 @@ export default {
             bandName
           )}&playerName=${this.game.playerName}`
         )
-        .then(() => {
+        .then((response) => {
+          this.game.playEnabled =
+            response.data.playersTurn === this.game.playerName;
           this.round();
           this.getVisibleCards();
         });
     },
     round: function () {
       api.get(`/round?uuid=${this.game.uuid}`).then((response) => {
+        this.game.playEnabled =
+          response.data.playersTurn === this.game.playerName;
         this.game.points = response.data;
       });
     },
@@ -135,12 +143,10 @@ export default {
       api
         .get(`/join?uuid=${this.game.uuid}&playerName=${this.game.playerName}`)
         .then((response) => {
-          this.game.is2ndPlayer = true;
           this.game.cards = response.data;
           setInterval(() => this.round(), UPDATE_INTERVAL_MS);
         });
     },
   },
-  mounted() {},
 };
 </script>
