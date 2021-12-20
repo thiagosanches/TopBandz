@@ -13,13 +13,21 @@
               class="form-control"
               v-model="game.playerName"
             />
-            <button
-              type="button"
-              class="btn btn-secondary"
-              v-on:click="newGame"
-            >
-              New Game Session
-            </button>
+            <div v-if="!game.isSecondPlayer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                v-on:click="newGame"
+              >
+                New Game Session
+              </button>
+              <br />
+              <span v-if="game.uuid"
+                >Send <a v-bind:href="(uuid = game.uuid)">this</a> link to your
+                friend!
+              </span>
+            </div>
+            <br /><br />
             <input
               type="text"
               id="player-name"
@@ -94,6 +102,7 @@ export default {
         playEnabled: true,
         playersTurn: "",
         cards: [],
+        isSecondPlayer: false,
       },
     };
   },
@@ -147,6 +156,15 @@ export default {
           setInterval(() => this.round(), UPDATE_INTERVAL_MS);
         });
     },
+  },
+  mounted() {
+    if (window.location.pathname !== "/") {
+      this.game.uuid = window.location.pathname.substring(
+        1,
+        window.location.pathname.length
+      );
+      this.game.isSecondPlayer = true;
+    }
   },
 };
 </script>

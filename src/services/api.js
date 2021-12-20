@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: ' https://iothiago.net.br:8443/api/game',
+    baseURL: 'https://localhost:5001/api/game',
 })
 
 export default api;
